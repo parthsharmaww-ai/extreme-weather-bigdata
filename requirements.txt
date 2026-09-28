@@ -1,0 +1,11 @@
+pymannkendall==1.4.3
+ruptures==1.1.10
+lightgbm==4.7.0
+geopandas==1.2.0
+libpysal==4.15.0
+esda==2.10.0
+numpy==2.5.3
+pandas==2.3.3
+pyarrow==25.0.0
+scikit-learn==1.9.1
+scipy==1.18.1
