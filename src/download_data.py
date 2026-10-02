@@ -100,7 +100,7 @@ def download_ghcn(station_ids: list[str]) -> bool:
     )
 
     for station_id in station_ids:
-        if not re.fullmatch(r"[A-Z0-9]{11}", station_id):
+        if not re.fullmatch(r"[A-Z0-9-]{11}", station_id):
             print(f"Skipping invalid GHCN station ID: {station_id}")
             success = False
             continue

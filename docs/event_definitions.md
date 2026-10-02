@@ -10,9 +10,10 @@ station's own normal climate.
 - Percentiles are computed from this window across all baseline years
 
 ## Station completeness rule
-A station is kept only if it has:
-- at least 80% of days present in the baseline period, and
-- at least N years of data (to be agreed by the team)
+
+For threshold calculation, a station must have at least 80% of expected daily observations for each of the three variables: TMAX, TMIN, and PRCP.
+
+The team's minimum-years requirement remains undecided and is not currently enforced.
 
 ## Definitions
 

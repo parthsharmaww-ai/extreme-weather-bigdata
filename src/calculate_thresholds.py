@@ -32,6 +32,7 @@ from pyspark.sql.functions import (
     to_date,
     when,
     percentile_approx,
+    sum as spark_sum,
 )
 from pyspark.sql.types import IntegerType
 
@@ -74,6 +75,45 @@ def calculate_thresholds(spark):
     print("Missing rainfall thresholds: no fallback applied")
 
     baseline = spark.read.parquet(str(BASELINE_PATH))
+
+    completeness_path = (
+        PROJECT_ROOT / "data" / "parquet" / "station_completeness_1991_2020"
+    )
+    if not completeness_path.exists():
+        print(f"ERROR: Completeness report not found: {completeness_path}")
+        print("Run src/prepare_baseline.py first.")
+        return False
+
+    completeness = spark.read.parquet(str(completeness_path))
+
+    eligible_stations = (
+        completeness
+        .groupBy("station_id")
+        .agg(
+            spark_sum(
+                when(col("meets_80_percent") == "YES", 1).otherwise(0)
+            ).alias("passing_variables")
+        )
+        .filter(col("passing_variables") == 3)
+        .select("station_id")
+    )
+
+    eligible_station_count = eligible_stations.count()
+
+    print(
+        f"Stations meeting 80% completeness for TMAX, TMIN, and PRCP: "
+        f"{eligible_station_count}"
+    )
+
+    if eligible_station_count == 0:
+        print("ERROR: No stations meet the completeness requirement.")
+        return False
+
+    baseline = baseline.join(
+        eligible_stations,
+        on="station_id",
+        how="inner",
+    )
 
     # Map each observation to its month/day position in reference
     # leap year 2000, allowing February 29 to have its own position.
@@ -237,7 +277,7 @@ def calculate_thresholds(spark):
         "\n- Calendar positions use leap reference year 2000 (366 days)."
         "\n- February 29 has its own calendar position."
         "\n- Rainfall percentiles use wet days only."
-        "\n- These thresholds are for testing with the current two stations."
+        "\n- These thresholds use the completeness-filtered global pilot stations."
         "\n- Validate the results before detecting events."
         "\n- Missing rainfall thresholds remain missing; no fallback is applied."
         "\n- Extreme-rain classification is unavailable for dates without a threshold."
