@@ -2,7 +2,7 @@
 
 Owner: Sarthak Manav
 Tool: Tableau Public / Desktop
-Status: Draft v2, aligned with `docs/event_definitions.md` (station-based). Columns open for review by Parth and Tanuj.
+Status: Draft v3. Station grain decided. Table A is the single source of truth for the mock data and the pipeline exports.
 
 ## 1. The story in one line
 
@@ -10,7 +10,7 @@ Status: Draft v2, aligned with `docs/event_definitions.md` (station-based). Colu
 
 The viewer moves from *where* (global map) → *who is most at risk* (hotspots) → *how it's changing* (trends) → *wet vs dry extremes* (rainfall and dry spells) → *compare two places* (region comparison).
 
-Unit of analysis: **weather station** (`station_id`), as in `event_definitions.md`. If the team later aggregates to a grid, `station_id` becomes `cell_id` and nothing else changes.
+Unit of analysis: **weather station** (`station_id`), as in `event_definitions.md`. **Decision: we work at station grain.** There is no grid aggregation and no `cell_id`. Maps plot stations directly, and Gi* uses distance-based neighbours between stations. Changing this later would mean revising Table A first.
 
 ## 2. Global filters (on every page)
 
@@ -99,7 +99,7 @@ Unit of analysis: **weather station** (`station_id`), as in `event_definitions.m
 ### Table C: `global_stats` (one row per event type)
 `event_type, morans_i, morans_p_value, n_stations`
 
-### Table D: `enso_yearly` (lookup, supplied by Sarthak)
+### Table D: `enso_monthly` (lookup, supplied by Sarthak)
 `year, month, nino34_anomaly, enso_phase` (El Niño ≥ +0.5, La Niña ≤ −0.5, else Neutral)
 
 ### Table E: `station_events` (optional, one row per event, for drill-down)
@@ -107,8 +107,22 @@ Unit of analysis: **weather station** (`station_id`), as in `event_definitions.m
 
 **Format:** CSV or Parquet, UTF-8, lowercase snake_case headers, the same `station_id` in every table, missing values left empty (not -999).
 
-## 5. Open questions for the team
+## 5. Mock data for the Tableau prototype
+
+| File | Matches | Rows |
+|---|---|---|
+| `tableau/mock_station_year_metrics.csv` | Table A, exactly the same columns in the same order | 10 stations × 24 years (2000–2023) |
+| `tableau/mock_station_summary.csv` | Table B, exactly the same columns in the same order | 10 stations × 6 event types |
+
+The mock values are **placeholders for wiring up the charts, not real climate data**. Station names are real cities so the map looks sensible, and annual precipitation is set to roughly realistic levels (e.g. Delhi ≈ 800 mm, Kochi ≈ 3000 mm). Event counts are random but internally consistent (e.g. `heatwave_days` ≤ `hot_days`, `compound_days` ≤ both `heatwave_days` and `dry_spell_days`). Station IDs are prefixed `MOCK` so they can't be confused with real ones.
+
+## 6. Decisions and open questions
+
+**Decided**
+- Station grain (see Section 1). There is no `cell_id`.
+- Naming follows `event_definitions.md`: "dry spell", not "drought".
+
+**Still open**
 1. Value of N (minimum years) in the completeness rule. Suggest ≥ 25 of 30 baseline years, plus ≥ 30 years overall for trends.
 2. Risk score formula: which inputs and weights?
-3. Grid aggregation for the map, or plot stations directly?
-4. See review notes on `event_definitions.md` (sent separately).
+3. See review notes on `event_definitions.md` (sent separately).
