@@ -1,0 +1,21 @@
+﻿services:
+  pyspark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: extreme-weather-pyspark
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    environment:
+      SPARK_DRIVER_MEMORY: 5g
+      JUPYTER_ENABLE_LAB: "yes"
+      PYTHONPATH: "/usr/local/spark/python:/usr/local/spark/python/lib/py4j-0.10.9.9-src.zip"
+    volumes:
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./src:/home/jovyan/work/src
+      - ./data:/home/jovyan/work/data
+    working_dir: /home/jovyan/work
+    shm_size: "1gb"
+    restart: unless-stopped
+
