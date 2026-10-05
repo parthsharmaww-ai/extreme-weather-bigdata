@@ -1,61 +1,79 @@
-station_id,lat,lon,region_name,country,continent,event_type,trend_slope,trend_p_value,years_used,risk_score,risk_rank,gi_z_score,gi_p_value,hotspot_class
-MOCK0001,28.58,77.21,North India,India,Asia,hot_days,4.81,0.324,24,80.8,4,3.66,0.001,Hot spot 99%
-MOCK0001,28.58,77.21,North India,India,Asia,heatwave,2.3,0.372,24,52.7,8,1.32,0.187,Not significant
-MOCK0001,28.58,77.21,North India,India,Asia,cold,-3.95,0.324,24,33.1,5,0.77,0.441,Not significant
-MOCK0001,28.58,77.21,North India,India,Asia,extreme_rain,0.86,0.344,24,63.1,3,2.1,0.036,Hot spot 95%
-MOCK0001,28.58,77.21,North India,India,Asia,dry_spell,0.03,0.185,24,39.6,9,0.38,0.704,Not significant
-MOCK0001,28.58,77.21,North India,India,Asia,compound,1.18,0.078,24,58.0,3,2.01,0.044,Hot spot 95%
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,hot_days,4.68,0.064,24,71.7,8,1.93,0.054,Hot spot 90%
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,heatwave,2.13,0.238,24,58.1,6,0.42,0.674,Not significant
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,cold,-2.65,0.283,24,31.8,6,-0.22,0.826,Not significant
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,extreme_rain,0.33,0.315,24,32.9,10,-1.26,0.208,Not significant
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,dry_spell,2.8,0.374,24,55.4,6,0.25,0.803,Not significant
-MOCK0002,26.82,75.8,Rajasthan,India,Asia,compound,0.14,0.331,24,36.5,10,0.68,0.497,Not significant
-MOCK0003,9.97,76.28,Kerala,India,Asia,hot_days,2.21,0.053,24,62.1,10,1.92,0.055,Hot spot 90%
-MOCK0003,9.97,76.28,Kerala,India,Asia,heatwave,0.91,0.007,24,52.9,7,0.74,0.459,Not significant
-MOCK0003,9.97,76.28,Kerala,India,Asia,cold,-3.36,0.13,24,36.5,4,0.22,0.826,Not significant
-MOCK0003,9.97,76.28,Kerala,India,Asia,extreme_rain,0.08,0.299,24,38.3,8,0.35,0.726,Not significant
-MOCK0003,9.97,76.28,Kerala,India,Asia,dry_spell,-0.04,0.206,24,58.3,4,-2.06,0.039,Cold spot 95%
-MOCK0003,9.97,76.28,Kerala,India,Asia,compound,0.63,0.314,24,51.4,6,0.9,0.368,Not significant
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,hot_days,7.41,0.286,24,83.1,3,1.27,0.204,Not significant
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,heatwave,3.97,0.19,24,69.7,2,2.08,0.038,Hot spot 95%
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,cold,-3.74,0.188,24,18.7,10,0.99,0.322,Not significant
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,extreme_rain,0.6,0.061,24,52.1,5,-1.73,0.084,Not significant
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,dry_spell,1.36,0.17,24,59.2,3,1.53,0.126,Not significant
-MOCK0004,13.48,2.17,Sahel,Niger,Africa,compound,1.71,0.256,24,62.3,2,-0.87,0.384,Not significant
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,hot_days,5.62,0.31,24,65.1,9,-0.4,0.689,Not significant
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,heatwave,2.33,0.281,24,74.5,1,3.02,0.003,Hot spot 99%
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,cold,-2.5,0.168,24,29.2,8,0.47,0.638,Not significant
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,extreme_rain,-0.05,0.189,24,53.0,4,0.42,0.674,Not significant
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,dry_spell,-1.34,0.283,24,33.8,10,1.12,0.263,Not significant
-MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,compound,1.72,0.151,24,55.6,4,-0.18,0.857,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,hot_days,7.39,0.329,24,100,1,1.13,0.258,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,heatwave,2.79,0.318,24,65.8,3,1.14,0.254,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,cold,-2.3,0.196,24,45.8,2,0.93,0.352,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,extreme_rain,0.22,0.014,24,49.0,6,-0.75,0.453,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,dry_spell,0.31,0.268,24,57.4,5,1.65,0.099,Not significant
-MOCK0006,30.19,-97.67,Texas,USA,North America,compound,1.75,0.283,24,51.7,5,-1.23,0.219,Not significant
-MOCK0007,33.94,-118.41,California,USA,North America,hot_days,1.63,0.329,24,75.7,6,2.01,0.044,Hot spot 95%
-MOCK0007,33.94,-118.41,California,USA,North America,heatwave,-0.63,0.042,24,45.4,9,0.49,0.624,Not significant
-MOCK0007,33.94,-118.41,California,USA,North America,cold,-3.73,0.12,24,45.9,1,0.97,0.332,Not significant
-MOCK0007,33.94,-118.41,California,USA,North America,extreme_rain,-0.36,0.176,24,65.9,2,-0.01,0.992,Not significant
-MOCK0007,33.94,-118.41,California,USA,North America,dry_spell,1.5,0.096,24,62.6,2,2.07,0.038,Hot spot 95%
-MOCK0007,33.94,-118.41,California,USA,North America,compound,-0.05,0.253,24,64.8,1,-1.48,0.139,Not significant
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,hot_days,3.2,0.275,24,72.1,7,2.01,0.044,Hot spot 95%
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,heatwave,2.12,0.132,24,60.8,5,-1.64,0.101,Not significant
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,cold,-2.8,0.143,24,20.0,9,0.76,0.447,Not significant
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,extreme_rain,-0.09,0.013,24,80.5,1,-0.15,0.881,Not significant
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,dry_spell,0.01,0.299,24,48.5,7,-1.09,0.276,Not significant
-MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,compound,0.69,0.006,24,47.8,8,1.34,0.18,Not significant
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,hot_days,6.73,0.085,24,92.3,2,1.03,0.303,Not significant
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,heatwave,2.85,0.329,24,43.9,10,-0.26,0.795,Not significant
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,cold,-3.03,0.125,24,29.6,7,-0.7,0.484,Not significant
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,extreme_rain,0.54,0.013,24,33.1,9,-0.03,0.976,Not significant
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,dry_spell,4.8,0.335,24,69.6,1,2.3,0.021,Hot spot 95%
-MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,compound,2.08,0.11,24,49.3,7,1.33,0.184,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,hot_days,7.17,0.036,24,76.0,5,0.03,0.976,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,heatwave,3.6,0.008,24,61.9,4,1.51,0.131,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,cold,-2.92,0.22,24,43.1,3,-0.27,0.787,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,extreme_rain,1.13,0.356,24,48.9,7,-1.89,0.059,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,dry_spell,1.25,0.183,24,47.5,8,-1.62,0.105,Not significant
-MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,compound,1.78,0.133,24,39.3,9,1.89,0.059,Hot spot 90%
+station_id,lat,lon,region_name,country,continent,event_type,trend_slope,trend_p_value,years_used,trend_eligible,risk_score,risk_rank,gi_z_score,gi_p_value,hotspot_class
+MOCK0001,28.58,77.21,North India,India,Asia,cold,-5.45,0.0,35,True,25.4,13,-2.45,0.014,Cold spot 95%
+MOCK0001,28.58,77.21,North India,India,Asia,compound,1.5,0.004,35,True,84.6,3,1.96,0.05,Hot spot 90%
+MOCK0001,28.58,77.21,North India,India,Asia,dry_spell,4.76,0.037,35,True,78.5,4,1.85,0.064,Hot spot 90%
+MOCK0001,28.58,77.21,North India,India,Asia,heatwave,3.1,0.0,35,True,90.8,2,2.15,0.032,Hot spot 95%
+MOCK0001,28.58,77.21,North India,India,Asia,heavy_rain,0.34,0.22,35,True,76.9,2,1.64,0.101,Not significant
+MOCK0001,28.58,77.21,North India,India,Asia,hot_days,6.67,0.0,35,True,93.8,1,2.25,0.024,Hot spot 95%
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,cold,-4.29,0.0,35,True,96.9,1,3.55,0.0,Hot spot 99%
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,compound,0.83,0.015,35,True,63.1,6,0.65,0.516,Not significant
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,dry_spell,2.86,0.299,35,True,81.5,2,1.67,0.095,Hot spot 90%
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,heatwave,1.74,0.001,35,True,7.7,13,-3.39,0.001,Cold spot 99%
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,heavy_rain,-0.0,0.528,35,True,43.1,9,-0.99,0.322,Not significant
+MOCK0002,26.82,75.8,Rajasthan,India,Asia,hot_days,5.31,0.0,35,True,69.2,5,1.14,0.254,Not significant
+MOCK0003,9.97,76.28,Kerala,India,Asia,cold,-4.71,0.0,35,True,53.8,6,0.21,0.834,Not significant
+MOCK0003,9.97,76.28,Kerala,India,Asia,compound,0.53,0.003,35,True,30.8,10,-1.24,0.215,Not significant
+MOCK0003,9.97,76.28,Kerala,India,Asia,dry_spell,1.6,0.146,35,True,46.2,9,-0.44,0.66,Not significant
+MOCK0003,9.97,76.28,Kerala,India,Asia,heatwave,2.5,0.0,35,True,55.4,7,-0.22,0.826,Not significant
+MOCK0003,9.97,76.28,Kerala,India,Asia,heavy_rain,-0.0,0.587,35,True,80.0,1,2.08,0.038,Hot spot 95%
+MOCK0003,9.97,76.28,Kerala,India,Asia,hot_days,5.0,0.0,35,True,10.8,13,-2.46,0.014,Cold spot 95%
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,cold,-4.55,0.0,34,True,39.2,9,-0.7,0.484,Not significant
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,compound,2.73,0.0,34,True,100.0,1,2.38,0.017,Hot spot 95%
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,dry_spell,14.62,0.015,34,True,100.0,1,2.68,0.007,Hot spot 99%
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,heatwave,3.33,0.0,34,True,95.4,1,2.06,0.039,Hot spot 95%
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,heavy_rain,-0.0,0.248,34,True,29.2,12,-2.1,0.036,Cold spot 95%
+MOCK0004,13.48,2.17,Sahel,Niger,Africa,hot_days,5.71,0.0,34,True,61.5,6,0.76,0.447,Not significant
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,cold,-6.0,0.0,35,True,26.2,12,-1.95,0.051,Cold spot 90%
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,compound,1.0,0.002,35,True,64.6,5,0.91,0.363,Not significant
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,dry_spell,1.48,0.267,35,True,49.2,8,-0.16,0.873,Not significant
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,heatwave,3.04,0.0,35,True,78.5,3,1.49,0.136,Not significant
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,heavy_rain,-0.0,0.503,35,True,47.7,8,-0.76,0.447,Not significant
+MOCK0005,-33.97,18.6,Western Cape,South Africa,Africa,hot_days,6.0,0.0,35,True,60.0,7,0.86,0.39,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,cold,-5.56,0.0,35,True,43.1,8,-1.61,0.107,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,compound,0.62,0.017,35,True,38.5,9,-0.96,0.337,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,dry_spell,1.0,0.409,35,True,32.3,10,-1.6,0.11,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,heatwave,3.2,0.0,35,True,57.7,6,-0.01,0.992,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,heavy_rain,-0.0,0.298,35,True,61.5,6,1.2,0.23,Not significant
+MOCK0006,30.19,-97.67,Texas,USA,North America,hot_days,6.67,0.0,35,True,70.8,4,0.84,0.401,Not significant
+MOCK0007,33.94,-118.41,California,USA,North America,cold,-4.55,0.0,35,True,76.2,4,1.53,0.126,Not significant
+MOCK0007,33.94,-118.41,California,USA,North America,compound,1.25,0.01,35,True,86.2,2,2.0,0.046,Hot spot 95%
+MOCK0007,33.94,-118.41,California,USA,North America,dry_spell,1.18,0.744,35,True,67.7,5,0.45,0.653,Not significant
+MOCK0007,33.94,-118.41,California,USA,North America,heatwave,2.14,0.0,35,True,20.0,11,-1.67,0.095,Cold spot 90%
+MOCK0007,33.94,-118.41,California,USA,North America,heavy_rain,-0.0,0.423,35,True,24.6,13,-2.54,0.011,Cold spot 95%
+MOCK0007,33.94,-118.41,California,USA,North America,hot_days,4.5,0.0,35,True,26.2,11,-1.87,0.061,Cold spot 90%
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,cold,-5.0,0.0,35,True,56.2,5,0.49,0.624,Not significant
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,compound,0.4,0.003,35,True,23.1,11,-2.06,0.039,Cold spot 95%
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,dry_spell,1.25,0.019,35,True,24.6,11,-1.87,0.061,Cold spot 90%
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,heatwave,2.27,0.0,35,True,18.5,12,-1.67,0.095,Cold spot 90%
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,heavy_rain,-0.0,0.966,35,True,75.4,3,1.7,0.089,Hot spot 90%
+MOCK0008,-3.12,-60.02,Amazonas,Brazil,South America,hot_days,6.0,0.0,35,True,73.8,2,1.68,0.093,Hot spot 90%
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,cold,-4.8,0.0,35,True,31.5,10,-1.33,0.184,Not significant
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,compound,1.67,0.0,35,True,83.1,4,1.31,0.19,Not significant
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,dry_spell,3.21,0.111,35,True,80.0,3,1.11,0.267,Not significant
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,heatwave,3.16,0.0,35,True,70.8,4,0.45,0.653,Not significant
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,heavy_rain,-0.0,0.24,35,True,38.5,10,-0.84,0.401,Not significant
+MOCK0009,37.42,-5.9,Andalusia,Spain,Europe,hot_days,5.91,0.0,35,True,46.2,9,-0.04,0.968,Not significant
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,cold,-4.58,0.0,35,True,80.8,3,2.22,0.026,Hot spot 95%
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,compound,-0.0,0.191,35,True,13.8,12,-1.89,0.059,Cold spot 90%
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,dry_spell,0.5,0.493,35,True,20.0,12,-1.85,0.064,Cold spot 90%
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,heatwave,2.86,0.0,35,True,53.8,8,0.32,0.749,Not significant
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,heavy_rain,-0.0,0.276,35,True,70.8,4,1.14,0.254,Not significant
+MOCK0010,-33.95,151.18,New South Wales,Australia,Oceania,hot_days,5.77,0.0,35,True,58.5,8,0.79,0.43,Not significant
+MOCK0011,40.78,-73.97,New York,USA,North America,cold,-4.17,0.0,35,True,93.1,2,2.24,0.025,Hot spot 95%
+MOCK0011,40.78,-73.97,New York,USA,North America,compound,-0.0,0.298,35,True,9.2,13,-1.51,0.131,Not significant
+MOCK0011,40.78,-73.97,New York,USA,North America,dry_spell,0.45,0.276,35,True,7.7,13,-2.93,0.003,Cold spot 99%
+MOCK0011,40.78,-73.97,New York,USA,North America,heatwave,2.5,0.0,35,True,34.6,10,-0.66,0.509,Not significant
+MOCK0011,40.78,-73.97,New York,USA,North America,heavy_rain,-0.0,0.191,35,True,66.2,5,1.74,0.082,Hot spot 90%
+MOCK0011,40.78,-73.97,New York,USA,North America,hot_days,5.62,0.0,35,True,21.5,12,-2.05,0.04,Cold spot 95%
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,cold,,,25,False,28.5,11,-2.58,0.01,Cold spot 95%
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,compound,,,25,False,49.2,8,-0.46,0.646,Not significant
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,dry_spell,,,25,False,53.8,7,-0.35,0.726,Not significant
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,heatwave,,,25,False,49.2,9,-0.19,0.849,Not significant
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,heavy_rain,,,25,False,52.3,7,0.57,0.569,Not significant
+MOCK0012,-1.32,36.93,Nairobi,Kenya,Africa,hot_days,,,25,False,35.4,10,-1.78,0.075,Cold spot 90%
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,cold,,,28,False,49.2,7,-0.12,0.904,Not significant
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,compound,,,28,False,53.8,7,0.59,0.555,Not significant
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,dry_spell,,,28,False,58.5,6,0.49,0.624,Not significant
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,heatwave,,,28,False,67.7,5,0.95,0.342,Not significant
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,heavy_rain,,,28,False,33.8,11,-1.47,0.142,Not significant
+MOCK0013,47.92,106.92,Ulaanbaatar,Mongolia,Asia,hot_days,,,28,False,72.3,3,0.89,0.373,Not significant
