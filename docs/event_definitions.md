@@ -25,13 +25,17 @@ station's own climate.
 
 ## 2. Completeness
 
-- Station-variable: at least 80% of the 10,958 baseline days.
-- A year counts as present when `days_present_pct` >= 90%.
-- Baseline: at least 25 of the 30 baseline years must be present.
-- Yearly counts and charts use complete years only. Incomplete years,
-  including 2026, are excluded.
-- Trends: at least 30 complete years. `years_used` is reported, and a
-  `trend_eligible` flag marks stations that qualify.
+Three separate checks, kept distinct:
+
+- **Station baseline eligibility:** the station-variable has at least 80% of
+  the 10,958 baseline days AND at least 25 of the 30 baseline years are valid
+  years.
+- **Valid year:** a year with `days_present_pct` >= 90%. Yearly counts and
+  charts use valid years only, so incomplete years, including 2026, are
+  excluded.
+- **Trend eligibility:** at least 30 valid years. The `trend_eligible` flag
+  marks stations that qualify. `years_used` is the number of valid years
+  actually used in that station's trend (per station and event type).
 
 ## 3. Event definitions
 
@@ -47,6 +51,11 @@ station's own climate.
 | Dry spell (`dry_spell_*`) | PRCP | 10 or more consecutive dry days |
 | Longest dry spell (`longest_dry_spell`) | PRCP | Longest run of dry days in the year. Headline dry indicator and the basis for dry trends |
 | Compound event (`compound_*`) | TMAX + PRCP | A heatwave overlapping a dry spell |
+
+The warm-day and heatwave thresholds are season-relative: each day is
+compared with the 95th percentile for its own calendar day at that station.
+There is no absolute temperature threshold, so a warm day in winter can still
+be a mild day. The same applies to cold days and cold snaps (5th percentile).
 
 Column names `heatwave_*` and `coldsnap_*` stay unchanged for compatibility.
 Legends and tooltips describe heatwaves as "warm spell (unusually warm for the
