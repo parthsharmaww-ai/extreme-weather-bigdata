@@ -1,20 +1,17 @@
-
 """
 Calculate station-specific extreme-weather thresholds for 1991-2020.
 
-Definitions from docs/event_definitions.md:
-- Hot day: TMAX above the 95th percentile.
-- Cold day: TMIN below the 5th percentile.
-- Extreme rain day: PRCP above the 99th percentile of baseline wet days.
+Definitions from docs/event_definitions.md (v2):
+- Warm day: TMAX above that calendar day's 95th percentile (season-relative).
+- Cold day: TMIN below that calendar day's 5th percentile.
+- Heavy rain day: PRCP above the station's annual 95th percentile of
+  baseline wet days.
 - Wet day: PRCP >= 1 mm.
 
-Percentiles use a +/-7 calendar-day window across the baseline period.
+Temperature percentiles use a +/-7 calendar-day window across the baseline
+period. Rain uses ONE annual threshold per station, repeated on all 366
+calendar days so the event-detection join does not change.
 Raw and baseline datasets are not modified.
-
-Missing rainfall thresholds:
-- Remain missing when no qualifying baseline wet days exist in a window.
-- No fallback threshold is applied.
-- Extreme-rain classification is unavailable for dates without a threshold.
 """
 
 import sys
@@ -51,6 +48,7 @@ BASELINE_START = "1991-01-01"
 BASELINE_END = "2020-12-31"
 
 WINDOW_DAYS = 7
+RAIN_PERCENTILE = 0.95
 CALENDAR_DAYS = 366
 PERCENTILE_ACCURACY = 10000
 
@@ -67,12 +65,11 @@ def calculate_thresholds(spark):
     print("EXTREME-WEATHER THRESHOLD CALCULATION")
     print("=" * 65)
     print(f"Baseline: {BASELINE_START} to {BASELINE_END}")
-    print(f"Calendar window: +/-{WINDOW_DAYS} days")
-    print("Hot-day percentile: 95th")
-    print("Cold-day percentile: 5th")
-    print("Extreme-rain percentile: 99th of baseline wet days")
+    print(f"Temperature calendar window: +/-{WINDOW_DAYS} days")
+    print("Warm-day percentile: 95th (TMAX)")
+    print("Cold-day percentile: 5th (TMIN)")
+    print("Heavy-rain percentile: annual 95th of baseline wet days")
     print("Wet-day definition: PRCP >= 1 mm")
-    print("Missing rainfall thresholds: no fallback applied")
 
     baseline = spark.read.parquet(str(BASELINE_PATH))
 
@@ -191,18 +188,26 @@ def calculate_thresholds(spark):
         )
     )
 
-    # Calculate the 99th percentile for baseline wet-day PRCP.
-    # If a window has no wet-day observations, no threshold row is
-    # produced for that station and calendar day. No fallback is used.
-    extreme_rain = (
-        expanded
-        .filter(col("element") == "PRCP")
-        .groupBy("station_id", "element", "target_calendar_day")
+    # Annual p95 of baseline wet days (PRCP >= 1 mm), one value per station,
+    # repeated on all 366 calendar days so the event-detection join does not
+    # change.
+    annual_rain = (
+        weather
+        .filter((col("element") == "PRCP") & (col("value") >= 1.0))
+        .groupBy("station_id", "element")
         .agg(
             percentile_approx(
-                "value", 0.99, PERCENTILE_ACCURACY
+                "value", RAIN_PERCENTILE, PERCENTILE_ACCURACY
             ).alias("threshold")
         )
+    )
+
+    calendar = spark.range(1, CALENDAR_DAYS + 1).select(
+        col("id").cast(IntegerType()).alias("target_calendar_day")
+    )
+
+    extreme_rain = annual_rain.crossJoin(calendar).select(
+        "station_id", "element", "target_calendar_day", "threshold"
     )
 
     # Combine the three threshold tables and add metadata.
@@ -232,7 +237,8 @@ def calculate_thresholds(spark):
             )
             .otherwise(
                 lit(
-                    "99th percentile of baseline wet-day PRCP (>= 1 mm)"
+                    "95th percentile of baseline wet-day PRCP (>= 1 mm), "
+                    "annual per station"
                 )
             ),
         )
@@ -277,10 +283,11 @@ def calculate_thresholds(spark):
         "\n- Calendar positions use leap reference year 2000 (366 days)."
         "\n- February 29 has its own calendar position."
         "\n- Rainfall percentiles use wet days only."
-        "\n- These thresholds use the completeness-filtered global pilot stations."
+        "\n- Rain thresholds are annual per station: the same value is"
+        " repeated on every calendar day."
+        "\n- Temperature thresholds use the +/-7-day window."
+        "\n- These thresholds use the completeness-filtered pilot stations."
         "\n- Validate the results before detecting events."
-        "\n- Missing rainfall thresholds remain missing; no fallback is applied."
-        "\n- Extreme-rain classification is unavailable for dates without a threshold."
     )
 
     return True
