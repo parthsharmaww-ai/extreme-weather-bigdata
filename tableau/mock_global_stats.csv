@@ -1,0 +1,7 @@
+event_type,morans_i,morans_p_value,n_stations
+cold,0.232,0.097,13
+compound,0.282,0.168,13
+dry_spell,0.224,0.154,13
+heatwave,0.065,0.164,13
+heavy_rain,0.073,0.061,13
+hot_days,0.304,0.016,13
