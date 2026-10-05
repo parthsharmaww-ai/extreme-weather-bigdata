@@ -95,6 +95,10 @@ def detect_runs(
 
     if intensity_aggregation == "sum":
         intensity_expression = spark_sum(col(intensity_column))
+    elif intensity_aggregation == "max":
+        intensity_expression = spark_max(col(intensity_column))
+    elif intensity_aggregation == "duration":
+        intensity_expression = count(lit(1))
     else:
         intensity_expression = avg(col(intensity_column))
 
@@ -199,16 +203,13 @@ def main():
                 dayofyear(col("calendar_date")),
             )
             .join(
-                threshold_calendar,
-                (daily["station_id"] == threshold_calendar["station_id"])
-                & (
-                    col("calendar_day")
-                    == threshold_calendar["target_calendar_day"]
+                threshold_calendar.withColumnRenamed(
+                    "target_calendar_day", "calendar_day"
                 ),
-                "inner",
+                on=["station_id", "calendar_day"],
+                how="inner",
             )
-            .drop(threshold_calendar["station_id"])
-            .drop("target_calendar_day", "calendar_date", "calendar_day")
+            .drop("calendar_date", "calendar_day")
         )
 
         # Daily flags use strict comparisons, as defined in the documentation.
@@ -282,29 +283,29 @@ def main():
         # Qualifying multi-day events.
         heatwaves = detect_runs(
             daily, "hot_flag", "heat_excess",
-            "HEATWAVE", "mean TMAX exceedance (degrees_C)",
-            HOT_MIN_DAYS,
+            "HEATWAVE", "max TMAX exceedance (degrees_C)",
+            HOT_MIN_DAYS, intensity_aggregation="max",
         )
 
         cold_snaps = detect_runs(
             daily, "cold_flag", "cold_deficit",
-            "COLD_SNAP", "mean TMIN deficit (degrees_C)",
-            COLD_MIN_DAYS,
+            "COLD_SNAP", "max TMIN deficit (degrees_C)",
+            COLD_MIN_DAYS, intensity_aggregation="max",
         )
 
         dry_spells = detect_runs(
-            daily, "dry_flag", "rain_deficit",
-            "DRY_SPELL", "cumulative rainfall deficit (mm)",
-            DRY_MIN_DAYS, intensity_aggregation="sum",
+            daily, "dry_flag", "dry_flag",
+            "DRY_SPELL", "duration (days)",
+            DRY_MIN_DAYS, intensity_aggregation="duration",
         )
 
-        # Each extreme-rain day is recorded as a one-day event.
-        extreme_rain = (
+        # Each heavy-rain day is recorded as a one-day event.
+        heavy_rain = (
             daily
             .filter(col("rain_flag") == 1)
             .select(
                 "station_id",
-                lit("EXTREME_RAIN").alias("event_type"),
+                lit("HEAVY_RAIN").alias("event_type"),
                 col("date").alias("start_date"),
                 col("date").alias("end_date"),
                 lit(1).alias("duration_days"),
@@ -353,7 +354,7 @@ def main():
             heatwaves
             .unionByName(cold_snaps)
             .unionByName(dry_spells)
-            .unionByName(extreme_rain)
+            .unionByName(heavy_rain)
             .unionByName(compound_events)
         )
 
@@ -382,7 +383,7 @@ def main():
             "\n- Thresholds come from the validated 1991-2020 baseline."
             "\n- Event detection uses available daily observations."
             "\n- Missing dates break consecutive-day runs."
-            "\n- Rainfall thresholds are never filled with fallback values."
+            "\n- Heavy-rain threshold is the annual station p95 of baseline wet days."
             "\n- Intensity measures remain provisional pending team review."
         )
 
