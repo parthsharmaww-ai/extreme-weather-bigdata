@@ -189,6 +189,7 @@ What the mock covers:
 - MOCK0012 Nairobi (record starts 2001) and MOCK0013 Ulaanbaatar (patchy years) have fewer than 30 valid years, so they show `trend_eligible = false`.
 - Trends in Table B are calculated from the Table A mock rows with the real rules (Theil-Sen, Mann-Kendall, valid years only, `longest_dry_spell` for dry spells).
 - Internal rules hold: `heatwave_days ≤ hot_days`, runs ≥ 3 or ≥ 10 days, `compound_days ≤` both `heatwave_days` and `dry_spell_days`.
+- Real data differs on that last rule: a compound event takes the year its overlap starts, while its heatwave and dry spell take their own start years. When one of them crosses New Year (e.g. a Sahel dry spell from November), `compound_days` can exceed that year's `heatwave_days` or `dry_spell_days`. The rule holds over a station's full record, not necessarily row by row, so Tableau checks and tooltips must not assume it per year.
 - Mock LAX and NYC sit close to the pilot numbers (LAX ~1–2 heavy-rain days and ~145-day longest dry spell; NYC ~5 and ~16).
 - `risk_score`, `gi_*` and `hotspot_class` are placeholders until those phases run.
 
