@@ -19,7 +19,7 @@ Unit of analysis: **weather station** (`station_id`). There is no grid and no `c
 | Filter | Type | Source |
 |---|---|---|
 | Location | Dropdown: continent → country → region | `continent`, `country`, `region_name` |
-| Year range | Range slider, default 1991–2025 | `year` |
+| Year range | Range slider over each station's full history (Table A keeps it all), default 1991–2025. ENSO shading only exists from 1950 | `year` |
 | Event type | Single select (parameter that switches the measure) | see table below |
 | Season | Single select: All / DJF / MAM / JJA / SON | `start_date` in Table E. Event measures only, see Table E in Section 4 |
 | Complete years only | Fixed filter, always on | `days_present_pct >= 90` |
