@@ -87,6 +87,9 @@ season)".
 
 ## 5. Changes to the export tables
 
+- Table A holds each station's full available history. Only the Table B
+  trends use the common 1991-2025 window, so history is kept without
+  making trends incomparable.
 - Table A: `extreme_rain_days` is renamed `heavy_rain_days`.
 - Table B: event type `extreme_rain` is renamed `heavy_rain`. Add
   `trend_eligible`. For `dry_spell`, the trend is calculated on
