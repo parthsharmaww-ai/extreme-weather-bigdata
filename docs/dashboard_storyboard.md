@@ -21,7 +21,7 @@ Unit of analysis: **weather station** (`station_id`). There is no grid and no `c
 | Location | Dropdown: continent → country → region | `continent`, `country`, `region_name` |
 | Year range | Range slider, default 1991–2025 | `year` |
 | Event type | Single select (parameter that switches the measure) | see table below |
-| Season | Single select: All / DJF / MAM / JJA / SON | Needs `station_events` (Table E), see Section 7 |
+| Season | Single select: All / DJF / MAM / JJA / SON | `start_date` in Table E. Event measures only, see Table E in Section 4 |
 | Complete years only | Fixed filter, always on | `days_present_pct >= 90` |
 
 **Event type options and the measure each one shows**
@@ -119,7 +119,7 @@ Matches the output of `src/export_station_year_metrics.py`, with the v2 rename.
 | event_type | string | `hot_days` / `heatwave` / `cold` / `heavy_rain` / `dry_spell` / `compound` |
 | trend_slope | float | Change per decade (Theil-Sen). `dry_spell` uses `longest_dry_spell`. Empty if not eligible |
 | trend_p_value | float | Mann-Kendall p-value. Empty if not eligible |
-| years_used | int | Number of valid (≥ 90%) years actually used for this trend |
+| years_used | int | Number of valid (≥ 90%) years **inside 1991–2025** actually used for this trend |
 | trend_eligible | bool | `years_used >= 30` |
 | risk_score | float 0–100 | Combined risk (formula to be agreed) |
 | risk_rank | int | Rank within the event type |
@@ -128,18 +128,50 @@ Matches the output of `src/export_station_year_metrics.py`, with the v2 rename.
 
 The yearly measure behind each `event_type` is in the Section 2 table.
 
+**Common trend window: 1991–2025 for every station.** Table A may hold a station's full history (NYC starts in 1869), so the Table B script must filter explicitly before fitting:
+`year BETWEEN 1991 AND 2025 AND days_present_pct >= 90`.
+Then `years_used` = rows left after that filter, and `trend_eligible = years_used >= 30`. Without the filter, long-record stations would get a 150-year trend while others get 30 years, and the trend map would compare unlike things. 2026 is outside the window (and partial), so it never enters a trend. The mock script applies the same filter (`TREND_FIRST_YEAR`, `TREND_LAST_YEAR`).
+
 ### Table C: `global_stats` (one row per event type)
 `event_type, morans_i, morans_p_value, n_stations`
 
 ### Table D: `enso_monthly` (supplied by Sarthak, `src/prepare_enso.py`)
-`year, month, season, nino34_anomaly, enso_phase`
+`year, month, season, nino34_anomaly, enso_phase, provisional`
 - Source: NOAA CPC Oceanic Niño Index (3-month running mean of Niño 3.4 anomalies), 1950 onward.
 - `month` is the centre month of the 3-month season (DJF → 1).
-- `enso_phase` uses NOAA's rule: El Niño (La Niña) when ONI ≥ +0.5 (≤ −0.5) for 5+ consecutive seasons, otherwise Neutral. The latest months stay Neutral until a run reaches 5 seasons.
+- `enso_phase` uses NOAA's rule: El Niño (La Niña) when ONI ≥ +0.5 (≤ −0.5) for 5+ consecutive seasons, otherwise Neutral.
+- `provisional = true` for the latest seasons whose phase can still change: an open run at the end of the record that is past ±0.5 but not yet 5 seasons long. Currently AMJ–JAS 2026 (+0.95 to +2.16), shown as Neutral until the run reaches 5 seasons. On the dashboard, provisional months are drawn hatched with the tooltip "Provisional: ONI above +0.5 for 4 seasons, El Niño not yet confirmed". NOAA also revises recent ONI values, so re-download before the final presentation.
 
-### Table E: `station_events` (needed for the season filter)
-`station_id, event_type, start_date, end_date, duration_days, intensity`
-This is the event table `detect_events.py` already builds, exported as CSV.
+### Table E: `station_events` (one row per event, for drill-down and the season filter)
+`station_id, event_type, start_date, end_date, duration_days, intensity_value, intensity_measure`
+
+This is the event table `detect_events.py` already builds, exported as CSV with its existing column names. `intensity_measure` is a text label so tooltips can show the unit next to the number.
+
+**Event-type mapping** between Table E (pipeline names) and Table B (dashboard names):
+
+| Table E `event_type` | Table B `event_type` | Dashboard label | Intensity (v2) |
+|---|---|---|---|
+| `HEATWAVE` | `heatwave` | Warm spells | Max of (TMAX − threshold), °C |
+| `COLD_SNAP` | `cold` | Cold snaps | Max of (threshold − TMIN), °C |
+| `HEAVY_RAIN` (currently `EXTREME_RAIN`) | `heavy_rain` | Heavy rain | Rain above threshold, mm (one row per day) |
+| `DRY_SPELL` | `dry_spell` | Dry spells | Duration, days |
+| `COMPOUND_HEATWAVE_DRY_SPELL` | `compound` | Compound | Overlap duration, days |
+| (no events) | `hot_days` | Warm days | n/a: single days, not events |
+
+In Tableau this mapping is a small calculated field (CASE on `event_type`), so no extra file is needed.
+
+**Which measures the season filter applies to.** Table E only has rows for heatwaves, cold snaps, heavy-rain days, dry spells of 10+ days and compound events. Each event is placed in the season of its `start_date`.
+
+| Measure | Season filter? | Why |
+|---|---|---|
+| Warm spells, cold snaps, compound | Yes | Events in Table E |
+| Heavy rain days | Yes | One Table E row per day |
+| Dry spells (count / days, 10+ days) | Yes | Events in Table E |
+| Warm days (`hot_days`), cold days | **No** | Single days aren't in Table E |
+| Longest dry spell | **No** | Runs under 10 days aren't in Table E, and a 145-day run spans seasons |
+| `tmax_anomaly_mean`, trends, risk, hotspots | **No** | Annual or per-station values |
+
+When the season is not "All", measures marked No are greyed out with the note "Season filter not available for this measure (yearly value)". Seasons are meteorological (DJF, MAM, JJA, SON) and are not flipped for southern-hemisphere stations; the tooltip shows the station's hemisphere.
 
 ## 5. Mock data for the Tableau prototype
 
@@ -150,13 +182,14 @@ Generated by `src/make_mock_data.py` (fixed seed, rerun any time). **All values 
 | `tableau/mock_station_year_metrics.csv` | Table A, same columns in the same order | 13 stations × 1991–2026 (458 rows) |
 | `tableau/mock_station_summary.csv` | Table B | 13 stations × 6 event types |
 | `tableau/mock_global_stats.csv` | Table C | 6 rows |
-| `tableau/enso_monthly.csv` | Table D (**real NOAA data**) | 920 months |
+| `tableau/enso_monthly.csv` | Table D (**real NOAA data**, latest 4 seasons provisional) | 920 months |
 
 What the mock covers:
 - 2026 is a partial year (74.6%), so the "complete years only" filter can be tested.
 - MOCK0012 Nairobi (record starts 2001) and MOCK0013 Ulaanbaatar (patchy years) have fewer than 30 valid years, so they show `trend_eligible = false`.
 - Trends in Table B are calculated from the Table A mock rows with the real rules (Theil-Sen, Mann-Kendall, valid years only, `longest_dry_spell` for dry spells).
 - Internal rules hold: `heatwave_days ≤ hot_days`, runs ≥ 3 or ≥ 10 days, `compound_days ≤` both `heatwave_days` and `dry_spell_days`.
+- Real data differs on that last rule: a compound event takes the year its overlap starts, while its heatwave and dry spell take their own start years. When one of them crosses New Year (e.g. a Sahel dry spell from November), `compound_days` can exceed that year's `heatwave_days` or `dry_spell_days`. The rule holds over a station's full record, not necessarily row by row, so Tableau checks and tooltips must not assume it per year.
 - Mock LAX and NYC sit close to the pilot numbers (LAX ~1–2 heavy-rain days and ~145-day longest dry spell; NYC ~5 and ~16).
 - `risk_score`, `gi_*` and `hotspot_class` are placeholders until those phases run.
 
@@ -180,6 +213,6 @@ What the mock covers:
 
 **Open**
 1. **Pipeline rename not done yet.** `export_station_year_metrics.py` still writes `extreme_rain_days`, and `detect_events.py` still uses `EXTREME_RAIN`. Needs changing to `heavy_rain_days` / `HEAVY_RAIN` (Tanuj).
-2. **Table B script.** No trend/summary export exists yet. The mock generator shows the intended method.
-3. **Season filter** needs Table E (`station_events`) exported as CSV, since Table A has no month.
+2. **Table B script.** No trend/summary export exists yet. The mock generator shows the intended method, including the 1991–2025 window filter.
+3. **Table E export.** `detect_events.py` writes Parquet; the dashboard needs it as CSV (`station_events.csv`) with `intensity_measure` kept.
 4. Risk score formula: inputs and weights.

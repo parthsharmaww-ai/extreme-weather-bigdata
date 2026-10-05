@@ -14,7 +14,8 @@ Outputs (tableau/):
 Rules mirrored from docs/event_definitions.md (v2):
   - valid year: days_present_pct >= 90 (2026 is partial, ~74.6%)
   - trends: Theil-Sen slope per decade + Mann-Kendall p-value on valid years
-    1991-2025, only when >= 30 valid years (trend_eligible)
+    inside the common window 1991-2025 (filtered explicitly), only when
+    >= 30 valid years in that window (trend_eligible)
   - dry_spell trend uses longest_dry_spell
   - compound_days <= heatwave_days and <= dry_spell_days (overlap, not stacked)
 
@@ -32,6 +33,9 @@ FIRST_YEAR, LAST_YEAR = 1991, 2026
 PARTIAL_YEAR_PCT = 74.6  # 2026 data runs to 29 Sep
 VALID_YEAR_PCT = 90.0
 MIN_TREND_YEARS = 30
+# Common trend window for every station (the real Table B script must apply
+# the same filter, since real records can start long before 1991).
+TREND_FIRST_YEAR, TREND_LAST_YEAR = 1991, 2025
 
 OUT = Path(__file__).resolve().parents[1] / "tableau"
 
@@ -160,7 +164,10 @@ def mann_kendall_p(values):
 
 
 def make_summary(rng, table_a):
-    valid = table_a[table_a["days_present_pct"] >= VALID_YEAR_PCT]
+    valid = table_a[
+        (table_a["days_present_pct"] >= VALID_YEAR_PCT)
+        & table_a["year"].between(TREND_FIRST_YEAR, TREND_LAST_YEAR)
+    ]
     meta = table_a.drop_duplicates("station_id").set_index("station_id")
     rows = []
     for event_type, metric in TREND_METRIC.items():
