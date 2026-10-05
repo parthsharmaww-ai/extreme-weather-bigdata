@@ -25,25 +25,30 @@ station's own climate.
 
 ## 2. Completeness
 
-Three separate checks, kept distinct:
+Three separate checks, kept distinct. The valid year comes first because the
+other two checks use it.
 
-- **Station baseline eligibility:** the station-variable has at least 80% of
-  the 10,958 baseline days AND at least 25 of the 30 baseline years are valid
-  years.
-- **Valid year:** a year with `days_present_pct` >= 90%. Yearly counts and
-  charts use valid years only, so incomplete years, including 2026, are
-  excluded.
-- **Trend eligibility:** at least 30 valid years. The `trend_eligible` flag
-  marks stations that qualify. `years_used` is the number of valid years
-  actually used in that station's trend (per station and event type).
+- **Valid year:** a year with `days_present_pct` >= 90%. `days_present_pct` is
+  the share of days in the year on which TMAX, TMIN and PRCP are all present.
+  A valid year therefore belongs to the station, not to a single variable.
+  Yearly counts and charts use valid years only, so incomplete years,
+  including 2026, are excluded.
+- **Station baseline eligibility:** two conditions. Per variable, the
+  station-variable has at least 80% of the 10,958 baseline days. Per station,
+  at least 25 of the 30 baseline years are valid years (counted per station,
+  because a valid year needs all three variables).
+- **Trend eligibility:** at least 30 valid years within the common 1991-2025
+  window, the same window for every station. The `trend_eligible` flag marks
+  stations that qualify. `years_used` is the number of valid years within that
+  window actually used in that station's trend (per station and event type).
 
 ## 3. Event definitions
 
 | Event | Variable | Definition |
 |---|---|---|
-| Warm day (`hot_days`) | TMAX | Above that calendar day's p95 (season-relative) |
+| Warm day (`hot_days`) | TMAX | Above the p95 for that calendar day (+/-7-day window, 1991-2020; season-relative) |
 | Heatwave / warm spell (`heatwave_*`) | TMAX | 3 or more consecutive warm days |
-| Cold day (`cold_days`) | TMIN | Below that calendar day's p5 |
+| Cold day (`cold_days`) | TMIN | Below the p5 for that calendar day (+/-7-day window, 1991-2020) |
 | Cold snap (`coldsnap_*`) | TMIN | 3 or more consecutive cold days |
 | Wet day | PRCP | At least 1 mm |
 | Heavy rain day (`heavy_rain_days`) | PRCP | Above the station's annual p95 of baseline wet days |
@@ -53,7 +58,8 @@ Three separate checks, kept distinct:
 | Compound event (`compound_*`) | TMAX + PRCP | A heatwave overlapping a dry spell |
 
 The warm-day and heatwave thresholds are season-relative: each day is
-compared with the 95th percentile for its own calendar day at that station.
+compared with the 95th percentile for its own calendar day (+/-7-day
+window, 1991-2020) at that station.
 There is no absolute temperature threshold, so a warm day in winter can still
 be a mild day. The same applies to cold days and cold snaps (5th percentile).
 
@@ -68,6 +74,8 @@ season)".
   run. It counts as unknown, not as "dry" or "no event".
 - Events are assigned to their start year. A spell crossing New Year counts in
   the year it started.
+- A compound event is assigned to the year its overlap starts, which can
+  differ from the year its heatwave started.
 - Intensity:
   - Heatwave: maximum of (TMAX - threshold) in degrees C.
   - Cold snap: maximum of (threshold - TMIN) in degrees C.
@@ -79,10 +87,15 @@ season)".
 
 ## 5. Changes to the export tables
 
+- Table A holds each station's full available history. Only the Table B
+  trends use the common 1991-2025 window, so history is kept without
+  making trends incomparable.
 - Table A: `extreme_rain_days` is renamed `heavy_rain_days`.
 - Table B: event type `extreme_rain` is renamed `heavy_rain`. Add
   `trend_eligible`. For `dry_spell`, the trend is calculated on
-  `longest_dry_spell` per year, in days per decade.
+  `longest_dry_spell` per year, in days per decade. Trends use valid years
+  within 1991-2025 for every station, even where Table A holds a longer
+  history.
 - Dashboard: the filter label becomes "Heavy rain (top 5% of wet days)".
   The map for dry spells shows the trend in `longest_dry_spell`, not the raw
   value.
