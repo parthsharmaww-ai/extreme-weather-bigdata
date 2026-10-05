@@ -95,6 +95,8 @@ def detect_runs(
 
     if intensity_aggregation == "sum":
         intensity_expression = spark_sum(col(intensity_column))
+    elif intensity_aggregation == "max":
+        intensity_expression = spark_max(col(intensity_column))
     else:
         intensity_expression = avg(col(intensity_column))
 
@@ -282,14 +284,14 @@ def main():
         # Qualifying multi-day events.
         heatwaves = detect_runs(
             daily, "hot_flag", "heat_excess",
-            "HEATWAVE", "mean TMAX exceedance (degrees_C)",
-            HOT_MIN_DAYS,
+            "HEATWAVE", "max TMAX exceedance (degrees_C)",
+            HOT_MIN_DAYS, intensity_aggregation="max",
         )
 
         cold_snaps = detect_runs(
             daily, "cold_flag", "cold_deficit",
-            "COLD_SNAP", "mean TMIN deficit (degrees_C)",
-            COLD_MIN_DAYS,
+            "COLD_SNAP", "max TMIN deficit (degrees_C)",
+            COLD_MIN_DAYS, intensity_aggregation="max",
         )
 
         dry_spells = detect_runs(
@@ -298,13 +300,13 @@ def main():
             DRY_MIN_DAYS, intensity_aggregation="sum",
         )
 
-        # Each extreme-rain day is recorded as a one-day event.
-        extreme_rain = (
+        # Each heavy-rain day is recorded as a one-day event.
+        heavy_rain = (
             daily
             .filter(col("rain_flag") == 1)
             .select(
                 "station_id",
-                lit("EXTREME_RAIN").alias("event_type"),
+                lit("HEAVY_RAIN").alias("event_type"),
                 col("date").alias("start_date"),
                 col("date").alias("end_date"),
                 lit(1).alias("duration_days"),
@@ -353,7 +355,7 @@ def main():
             heatwaves
             .unionByName(cold_snaps)
             .unionByName(dry_spells)
-            .unionByName(extreme_rain)
+            .unionByName(heavy_rain)
             .unionByName(compound_events)
         )
 
@@ -382,7 +384,7 @@ def main():
             "\n- Thresholds come from the validated 1991-2020 baseline."
             "\n- Event detection uses available daily observations."
             "\n- Missing dates break consecutive-day runs."
-            "\n- Rainfall thresholds are never filled with fallback values."
+            "\n- Heavy-rain threshold is the annual station p95 of baseline wet days."
             "\n- Intensity measures remain provisional pending team review."
         )
 
