@@ -95,11 +95,32 @@ def calculate_thresholds(spark):
         .select("station_id")
     )
 
+    # Station baseline eligibility also needs at least 25 valid baseline
+    # years (src/check_station_eligibility.py).
+    eligibility_path = (
+        PROJECT_ROOT / "data" / "parquet" / "station_eligibility"
+    )
+    if eligibility_path.exists():
+        baseline_eligible = (
+            spark.read.parquet(str(eligibility_path))
+            .filter(col("baseline_eligible"))
+            .select("station_id")
+        )
+        eligible_stations = eligible_stations.join(
+            baseline_eligible, on="station_id", how="inner"
+        )
+    else:
+        print(
+            "WARNING: station_eligibility not found, so the 25-of-30 "
+            "valid-years rule is NOT applied. "
+            "Run src/check_station_eligibility.py first."
+        )
+
     eligible_station_count = eligible_stations.count()
 
     print(
-        f"Stations meeting 80% completeness for TMAX, TMIN, and PRCP: "
-        f"{eligible_station_count}"
+        f"Stations eligible for thresholds (80% rule per variable, plus "
+        f"25 of 30 valid baseline years): {eligible_station_count}"
     )
 
     if eligible_station_count == 0:
