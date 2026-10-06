@@ -15,6 +15,9 @@
       - ./notebooks:/home/jovyan/work/notebooks
       - ./src:/home/jovyan/work/src
       - ./data:/home/jovyan/work/data
+      - ./tests:/home/jovyan/work/tests
+      - ./reference:/home/jovyan/work/reference
+      - ./docs:/home/jovyan/work/docs
     working_dir: /home/jovyan/work
     shm_size: "1gb"
     restart: unless-stopped
