@@ -33,10 +33,10 @@ Reads:  data/parquet/extreme_events, data/parquet/storm_events,
 Writes: data/export/storm_events_validation.csv
 """
 
+import datetime
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 
@@ -91,7 +91,8 @@ def storm_state_days(storm, storm_types):
     valid = begin.notna() & end.notna()
     begin, end = begin[valid], end[valid]
     end = pd.concat([begin, end], axis=1).max(axis=1)
-    end = np.minimum(end, begin + pd.Timedelta(days=MAX_RECORD_DAYS))
+    limit = begin + datetime.timedelta(days=MAX_RECORD_DAYS)
+    end = end.where(end <= limit, limit)
     states = records.loc[valid, "STATE"].str.upper()
     return expand_days(states, begin, end)
 
@@ -111,7 +112,7 @@ def detected_state_days(events, event_types, state_of_station):
 def near(day_set, state, day):
     """True if the state has a day in the set within the tolerance."""
     for shift in range(-TOLERANCE_DAYS, TOLERANCE_DAYS + 1):
-        if (state, day + pd.Timedelta(days=shift)) in day_set:
+        if (state, day + datetime.timedelta(days=shift)) in day_set:
             return True
     return False
 
