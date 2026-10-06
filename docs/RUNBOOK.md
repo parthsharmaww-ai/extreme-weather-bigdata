@@ -23,6 +23,7 @@ been run end to end on real data.
 | 11 | Table B (trends) | `src/compute_station_summary.py` | `station_year_metrics.csv` | `station_summary.csv` |
 | 12 | Risk score and hotspots | `src/compute_risk_and_hotspots.py` | Tables A and B | `station_summary.csv` (filled in), `global_stats.csv` |
 | 13 | Validate against Storm Events | `src/validate_against_storm_events.py` | `extreme_events`, `storm_events`, `station_geography.csv` | `storm_events_validation.csv` |
+| 14 | Dashboard tables | `src/build_dashboard_data.py` | Tables A, B, C and E | `data/export/tableau/dashboard_data.csv`, `dashboard_season.csv` |
 
 Run `python src/<script>.py` for each step. Step 0 already puts the chosen stations' `.dly` files in
 `data/raw/ghcn_d`, so step 1 only needs to run for the station metadata and the Storm Events file. The data folders are
@@ -46,13 +47,16 @@ python tests/check_station_geography.py
 python tests/check_risk_and_hotspots.py
 python tests/check_storm_events_validation.py
 python tests/check_candidate_screening.py
+python tests/check_dashboard_data.py
 ```
 
 ## Files for Tableau
 
-`station_year_metrics.csv` (Table A), `station_summary.csv` (Table B),
-`global_stats.csv` (Table C), `station_events.csv` (Table E), and
-`tableau/enso_monthly.csv` (Table D).
+`data/export/tableau/dashboard_data.csv` (one row per station, complete year and event type, with the
+trend, risk and hotspot columns attached), `dashboard_season.csv` (events by season) and
+`tableau/enso_monthly.csv` (El Nino / La Nina). Step 14 builds the first two from the exports
+and stops without writing anything if the event table and the yearly table disagree. The CSV files
+stay out of git; commit only the packaged workbook (`tableau/extreme_weather_dashboard.twbx`).
 
 ## Choosing the stations (step 0)
 
