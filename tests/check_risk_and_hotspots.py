@@ -172,6 +172,17 @@ check("classification at the p = 0.10, 0.05 and 0.01 boundaries",
       and module.classify(float("nan"), float("nan")) is None)
 check("one station gets a percentile rank of 0.5", module.percentile_rank([7.0])[0] == 0.5)
 
+two_a = [(10.0, float(x)) for x in range(0, 6)]
+two_b = [(10.0, float(x)) for x in range(150, 156)]
+lat12 = np.array([a for a, b in two_a + two_b]); lon12 = np.array([b for a, b in two_a + two_b])
+y12 = np.random.default_rng(3).poisson(8, 12).astype(float)
+with warnings.catch_warnings(record=True) as caught:
+    warnings.simplefilter("always")
+    module.hotspot_statistics(y12, lat12, lon12)
+check("two far-apart groups of stations raise no repeated warning",
+      not any("connected" in str(w.message) for w in caught))
+check("the number of separate groups is reported (2)", module.connected_groups(lat12, lon12) == 2)
+
 print("Calibration on random data (200 runs, Poisson counts, 64 stations)")
 la, lo = np.meshgrid(np.array(LATS), np.array(LONS), indexing="ij")
 moran_hits, gi_share = [], []

@@ -120,7 +120,15 @@ def nearest_neighbour_weights(lat, lon, k=NEIGHBOURS):
     for i in range(n):
         order = [j for j in np.argsort(distances[i], kind="stable") if j != i]
         neighbours[i] = order[:k]
-    return W(neighbours, {i: [1.0] * len(neighbours[i]) for i in range(n)})
+    with warnings.catch_warnings():
+        # A graph with separate groups is reported once in main(), not on every call.
+        warnings.simplefilter("ignore", UserWarning)
+        return W(neighbours, {i: [1.0] * len(neighbours[i]) for i in range(n)})
+
+
+def connected_groups(lat, lon):
+    """Number of separate groups in the nearest-neighbour graph."""
+    return nearest_neighbour_weights(lat, lon).n_components
 
 
 def classify(z, p):
@@ -218,6 +226,10 @@ def main():
 
     summary, global_stats = build_tables(table_a, table_b)
 
+    stations = summary[summary["trend_eligible"]].drop_duplicates("station_id")
+    stations = stations.dropna(subset=["lat", "lon"])
+    groups = connected_groups(stations["lat"].to_numpy(), stations["lon"].to_numpy()) if len(stations) > NEIGHBOURS else 1
+
     summary.to_csv(TABLE_B_FILE, index=False)
     global_stats.to_csv(TABLE_C_FILE, index=False)
 
@@ -226,6 +238,10 @@ def main():
     print("=" * 65)
     print(f"Neighbours per station: {NEIGHBOURS}; minimum stations: "
           f"{MIN_STATIONS}; weights: level {LEVEL_WEIGHT}, trend {TREND_WEIGHT}")
+    if groups > 1:
+        print(f"\nNote: the {NEIGHBOURS}-nearest-neighbour graph has {groups} separate groups of "
+              "stations (for example a continent far from the others). Hotspot classes are "
+              "relative within each group.")
     print("\nGlobal statistics (Table C):")
     print(global_stats.to_string(index=False))
 
