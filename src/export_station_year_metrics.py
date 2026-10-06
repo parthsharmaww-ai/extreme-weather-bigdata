@@ -16,6 +16,7 @@ BASELINE_MEAN_PATH = PROJECT_ROOT / "data" / "parquet" / "baseline_means_1991_20
 THRESHOLD_PATH = PROJECT_ROOT / "data" / "parquet" / "extreme_thresholds_1991_2020"
 EVENT_PATH = PROJECT_ROOT / "data" / "parquet" / "extreme_events"
 METADATA_PATH = PROJECT_ROOT / "data" / "export" / "station_metadata.csv"
+GEOGRAPHY_PATH = PROJECT_ROOT / "data" / "export" / "station_geography.csv"
 
 OUTPUT_DIR = PROJECT_ROOT / "data" / "export"
 OUTPUT_FILE = OUTPUT_DIR / "station_year_metrics.csv"
@@ -543,7 +544,12 @@ def main():
             "station_name",
             "lat",
             "lon",
-            "elevation_m",
+            # NOAA records a missing elevation as -999.9. Table A leaves it
+            # empty instead.
+            F.when(
+                F.col("elevation_m") <= -999,
+                F.lit(None).cast("double"),
+            ).otherwise(F.col("elevation_m")).alias("elevation_m"),
         )
 
         result = result.join(
@@ -552,23 +558,38 @@ def main():
             how="left",
         )
 
-        # Region/country/continent mapping has not been verified.
-        # Leave these fields null rather than inventing geography.
-        result = (
-            result
-            .withColumn(
-                "region_name",
-                F.lit(None).cast("string"),
+        # Region, country and continent come from
+        # src/build_station_geography.py. Without that file they stay null
+        # rather than being guessed.
+        if GEOGRAPHY_PATH.exists():
+            geography = (
+                spark.read
+                .option("header", True)
+                .csv(str(GEOGRAPHY_PATH))
+                .select("station_id", "region_name", "country", "continent")
             )
-            .withColumn(
-                "country",
-                F.lit(None).cast("string"),
+            result = result.join(geography, on="station_id", how="left")
+        else:
+            print(
+                "WARNING: station_geography.csv not found, so region_name, "
+                "country and continent will be empty. "
+                "Run src/build_station_geography.py first."
             )
-            .withColumn(
-                "continent",
-                F.lit(None).cast("string"),
+            result = (
+                result
+                .withColumn(
+                    "region_name",
+                    F.lit(None).cast("string"),
+                )
+                .withColumn(
+                    "country",
+                    F.lit(None).cast("string"),
+                )
+                .withColumn(
+                    "continent",
+                    F.lit(None).cast("string"),
+                )
             )
-        )
 
         # ----------------------------------------------------
         # 8. SELECT OUTPUT COLUMNS
