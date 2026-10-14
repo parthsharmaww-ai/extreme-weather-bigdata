@@ -6,8 +6,6 @@ This is a big data pipeline and a five-page Tableau dashboard built on daily NOA
 
 It's our Group 6 project for the Big Data and Data Visualization course in the M.Sc. Data Science & Management program (IIT Ropar × IIM Amritsar).
 
-![Trends dashboard](docs/images/p3_trends.png)
-
 ---
 
 ## What we found
@@ -76,17 +74,6 @@ The packaged workbook is [`tableau/extreme_weather_dashboard.twbx`](tableau/extr
 | 4. Heavy rain and dry spells | Are places getting wetter, drier, or both? |
 | 5. Region comparison | How do two places compare across all six event types? |
 
-<details>
-<summary>Screenshots</summary>
-
-![Overview](docs/images/p1_overview.png)
-![Hotspots](docs/images/p2_hotspots.png)
-![Trends](docs/images/p3_trends.png)
-![Heavy rain and dry spells](docs/images/p4_rain_and_dry_spells.png)
-![Comparison](docs/images/p5_comparison.png)
-
-</details>
-
 The design notes behind each page are in [`docs/dashboard_storyboard.md`](docs/dashboard_storyboard.md).
 
 ---
@@ -134,7 +121,7 @@ python tests/check_dashboard_data.py
 ```
 src/          pipeline scripts (ingest → thresholds → events → trends → hotspots → exports)
 tests/        checks on synthetic data
-docs/         event definitions, dashboard storyboard, runbook, screenshots
+docs/         event definitions, dashboard storyboard, runbook
 reference/    country → continent and region-name lookups
 tableau/      packaged workbook, ENSO data, mock data, PDF/PNG exports
 data/         raw, parquet and export folders (not in git)
